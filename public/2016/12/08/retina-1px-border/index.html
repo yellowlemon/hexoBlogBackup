@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>7种方法解决移动端Retina屏幕1px边框问题 | 柠檬诗诗的小站</title>
+  <meta name="description" content="在之前的项目中，UI告诉我说我们移动项目中的边框全部都变粗了。原谅我的近视眼，为什么我看不出什么差距了，结果UI把他的设计稿跟我的屏幕截图跟我看，居然真的不一样！！！ 没有办法，只有在后面的版本中去修改了，但是要改的话，需要知道是为什么。所以查了很多资料，终于搞懂了这个问题，并且总结了几种方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7种方法解决移动端Retina屏幕1px边框问题">
+<meta property="og:url" content="https://www.lemonss.net/2016/12/08/retina-1px-border/index.html">
+<meta property="og:site_name" content="柠檬诗诗的小站">
+<meta property="og:description" content="在之前的项目中，UI告诉我说我们移动项目中的边框全部都变粗了。原谅我的近视眼，为什么我看不出什么差距了，结果UI把他的设计稿跟我的屏幕截图跟我看，居然真的不一样！！！ 没有办法，只有在后面的版本中去修改了，但是要改的话，需要知道是为什么。所以查了很多资料，终于搞懂了这个问题，并且总结了几种方法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.lemonss.net/assets/blogImg/retina-1px-border01.jpg">
+<meta property="og:image" content="https://www.lemonss.net/assets/blogImg/retina-1px-border02.jpg">
+<meta property="og:image" content="https://www.lemonss.net/assets/blogImg/retina-1px-border03.png">
+<meta property="article:published_time" content="2016-12-08T02:38:15.000Z">
+<meta property="article:modified_time" content="2022-10-18T14:39:25.464Z">
+<meta property="article:author" content="LemonAce">
+<meta property="article:tag" content="css">
+<meta property="article:tag" content="移动端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.lemonss.net/assets/blogImg/retina-1px-border01.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://www.lemonss.net/2016/12/08/retina-1px-border/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="柠檬诗诗的小站" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/yellowlemon" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">LemonAce</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">前端开发</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Chengdu, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/yellowlemon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.weibo.com/yellowhlemon" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://segmentfault.com/u/yellowlemon" target="_blank" title="Segmentfault" data-toggle=tooltip data-placement=top><i class="icon icon-segmentfault"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%AE%B0/">杂记</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/" rel="tag">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/" rel="tag">js</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/" rel="tag">代码片段</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%AE%B0/" rel="tag">杂记</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF/" rel="tag">移动端</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/css/" style="font-size: 13px;">css</a> <a href="/tags/hexo/" style="font-size: 14px;">hexo</a> <a href="/tags/js/" style="font-size: 13px;">js</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/" style="font-size: 13px;">代码片段</a> <a href="/tags/%E6%9D%82%E8%AE%B0/" style="font-size: 13px;">杂记</a> <a href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF/" style="font-size: 13px;">移动端</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/01/06/longtap/" class="title">禁止长按选中文本</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-01-06T09:21:02.000Z" itemprop="datePublished">2017-01-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a>
+              </p>
+              <p class="item-title">
+                <a href="/2016/12/21/postMessage/" class="title">利用postMessage解决webview中iframe数据交互问题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2016-12-21T07:49:41.000Z" itemprop="datePublished">2016-12-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/hexo/">hexo</a>
+              </p>
+              <p class="item-title">
+                <a href="/2016/12/13/hexo-ssl/" class="title">hexo博客之HTTPS访问</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2016-12-13T05:58:20.000Z" itemprop="datePublished">2016-12-13</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a>
+              </p>
+              <p class="item-title">
+                <a href="/2016/12/08/retina-1px-border/" class="title">7种方法解决移动端Retina屏幕1px边框问题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2016-12-08T02:38:15.000Z" itemprop="datePublished">2016-12-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/hexo/">hexo</a>
+              </p>
+              <p class="item-title">
+                <a href="/2016/12/07/hexo-qiniu/" class="title">Hexo折腾之图片存储</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2016-12-07T06:58:16.000Z" itemprop="datePublished">2016-12-07</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-retina-1px-border" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      7种方法解决移动端Retina屏幕1px边框问题
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2016/12/08/retina-1px-border/" class="article-date">
+	  <time datetime="2016-12-08T02:38:15.000Z" itemprop="datePublished">2016-12-08</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/css/" rel="tag">css</a>, <a class="article-tag-link-link" href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF/" rel="tag">移动端</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2016/12/08/retina-1px-border/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>在之前的项目中，UI告诉我说我们移动项目中的边框全部都变粗了。原谅我的近视眼，为什么我看不出什么差距了，结果UI把他的设计稿跟我的屏幕截图跟我看，居然真的不一样！！！</p>
+<p>没有办法，只有在后面的版本中去修改了，但是要改的话，需要知道是为什么。所以查了很多资料，终于搞懂了这个问题，并且总结了几种方法。</p>
+<span id="more"></span>
+<h3 id="造成边框变粗的原因"><a href="#造成边框变粗的原因" class="headerlink" title="造成边框变粗的原因"></a>造成边框变粗的原因</h3><p>其实这个原因很简单，因为css中的1px并不等于移动设备的1px，这些由于不同的手机有不同的像素密度。在window对象中有一个devicePixelRatio属性，他可以反应css中的像素与设备的像素比。</p>
+<blockquote>
+<p>devicePixelRatio的官方的定义为：设备物理像素和设备独立像素的比例，也就是 devicePixelRatio = 物理像素 / 独立像素。</p>
+</blockquote>
+<h3 id="解决边框变粗的6种办法"><a href="#解决边框变粗的6种办法" class="headerlink" title="解决边框变粗的6种办法"></a>解决边框变粗的6种办法</h3><h5 id="1、0-5px边框"><a href="#1、0-5px边框" class="headerlink" title="1、0.5px边框"></a>1、0.5px边框</h5><p>在2014年的 WWDC，“设计响应的Web体验” 一讲中，Ted O’Connor 讲到关于“retina<br>hairlines”（retina 极细的线）：在retina屏上仅仅显示1物理像素的边框，开发者应该如何处理呢。</p>
+<p>他们曾介绍到 iOS 8 和 OS X Yosemite 即将支持 0.5px 的边框：</p>
+<p><img src="/assets/blogImg/retina-1px-border01.jpg" alt="0.5px边框"></p>
+<p>额的神呐！so easy! 果真如此吗？</p>
+<p>这样还不够（WWDC幻灯片通常是“唬人”的），但是相差不多。</p>
+<p>问题是 retina 屏的浏览器可能不认识0.5px的边框，将会把它解释成0px，没有边框。包括 iOS 7 和之前版本，OS X Mavericks 及以前版本，还有 Android 设备。</p>
+<p><strong>解决方案：</strong></p>
+<p>解决方案是通过 JavaScript 检测浏览器能否处理0.5px的边框，如果可以，给html标签元素添加个class。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable language_">window</span>.<span class="property">devicePixelRatio</span> &amp;&amp; devicePixelRatio &gt;= <span class="number">2</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> testElem = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line">  testElem.<span class="property">style</span>.<span class="property">border</span> = <span class="string">&#x27;.5px solid transparent&#x27;</span>;</span><br><span class="line">  <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(testElem);</span><br><span class="line">  <span class="keyword">if</span> (testElem.<span class="property">offsetHeight</span> == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;html&#x27;</span>).<span class="property">classList</span>.<span class="title function_">add</span>(<span class="string">&#x27;hairlines&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">removeChild</span>(testElem);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 脚本应该放在&lt;body&gt;内，如果在&lt;head&gt;里面运行，需要包装 $(document).ready(function() &#123;&#125;)</span></span><br></pre></td></tr></table></figure>
+
+<p>然后，极细的边框样式就容易了：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">div</span> &#123;</span><br><span class="line">  <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#bbb</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.hairlines</span> <span class="selector-tag">div</span> &#123;</span><br><span class="line">  <span class="attribute">border-width</span>: <span class="number">0.5px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优点：</strong></p>
+<ul>
+<li>简单，不需要过多代码。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>无法兼容安卓设备、 iOS 8 以下设备。</li>
+</ul>
+<h5 id="2、使用border-image实现"><a href="#2、使用border-image实现" class="headerlink" title="2、使用border-image实现"></a>2、使用border-image实现</h5><p>准备一张符合你要求的border-image：</p>
+<p><img src="/assets/blogImg/retina-1px-border02.jpg" alt="底部边框"></p>
+<p>样式设置：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.border-bottom-1px</span> &#123;</span><br><span class="line">    <span class="attribute">border-width</span>: <span class="number">0</span> <span class="number">0</span> <span class="number">1px</span> <span class="number">0</span>;</span><br><span class="line">    -webkit-<span class="attribute">border-image</span>: <span class="built_in">url</span>(<span class="string">linenew.png</span>) <span class="number">0</span> <span class="number">0</span> <span class="number">2</span> <span class="number">0</span> stretch;</span><br><span class="line">    <span class="attribute">border-image</span>: <span class="built_in">url</span>(<span class="string">linenew.png</span>) <span class="number">0</span> <span class="number">0</span> <span class="number">2</span> <span class="number">0</span> stretch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上文是把border设置在边框的底部，所以使用的图片是2px高，上部的1px颜色为透明，下部的1px使用视觉规定的border的颜色。如果边框底部和顶部同时需要border，可以使用下面的border-image：</p>
+<p><img src="/assets/blogImg/retina-1px-border03.png" alt="上下边框"></p>
+<p>样式设置：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.border-image-1px</span> &#123;</span><br><span class="line">    <span class="attribute">border-width</span>: <span class="number">1px</span> <span class="number">0</span>;</span><br><span class="line">    -webkit-<span class="attribute">border-image</span>: <span class="built_in">url</span>(<span class="string">linenew.png</span>) <span class="number">2</span> <span class="number">0</span> stretch;</span><br><span class="line">    <span class="attribute">border-image</span>: <span class="built_in">url</span>(<span class="string">linenew.png</span>) <span class="number">2</span> <span class="number">0</span> stretch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到目前为止，我们已经能在iphone上展现1px border的效果了。但是我们发现这样的方法在非视网膜屏上会出现border显示不出来的现象，于是使用Media Query做了一些兼容，样式设置如下：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.border-image-1px</span> &#123;</span><br><span class="line">    <span class="attribute">border-bottom</span>: <span class="number">1px</span> solid <span class="number">#666</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@media</span> <span class="keyword">only</span> screen <span class="keyword">and</span> (<span class="attribute">-webkit-min-device-pixel-ratio</span>: <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="selector-class">.border-image-1px</span> &#123;</span><br><span class="line">        <span class="attribute">border-bottom</span>: none;</span><br><span class="line">        <span class="attribute">border-width</span>: <span class="number">0</span> <span class="number">0</span> <span class="number">1px</span> <span class="number">0</span>;</span><br><span class="line">        -webkit-<span class="attribute">border-image</span>: <span class="built_in">url</span>(<span class="string">../img/linenew.png</span>) <span class="number">0</span> <span class="number">0</span> <span class="number">2</span> <span class="number">0</span> stretch;</span><br><span class="line">        <span class="attribute">border-image</span>: <span class="built_in">url</span>(<span class="string">../img/linenew.png</span>) <span class="number">0</span> <span class="number">0</span> <span class="number">2</span> <span class="number">0</span> stretch;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优点：</strong></p>
+<ul>
+<li>可以设置单条,多条边框</li>
+<li>没有性能瓶颈的问题</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>修改颜色麻烦, 需要替换图片</li>
+<li>圆角需要特殊处理，并且边缘会模糊</li>
+</ul>
+<h5 id="3、使用background-image实现"><a href="#3、使用background-image实现" class="headerlink" title="3、使用background-image实现"></a>3、使用background-image实现</h5><p>background-image 跟border-image的方法一样，你要先准备一张符合你要求的图片。然后将边框模拟在背景上。</p>
+<p>样式设置：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.background-image-1px</span> &#123;</span><br><span class="line">    <span class="attribute">background</span>: <span class="built_in">url</span>(<span class="string">../img/line.png</span>) repeat-x left bottom;</span><br><span class="line">    -webkit-<span class="attribute">background-size</span>: <span class="number">100%</span> <span class="number">1px</span>;</span><br><span class="line">    <span class="attribute">background-size</span>: <span class="number">100%</span> <span class="number">1px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优点：</strong></p>
+<ul>
+<li>可以设置单条,多条边框</li>
+<li>没有性能瓶颈的问题</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>修改颜色麻烦, 需要替换图片</li>
+<li>圆角需要特殊处理，并且边缘会模糊</li>
+</ul>
+<h5 id="4、多背景渐变实现"><a href="#4、多背景渐变实现" class="headerlink" title="4、多背景渐变实现"></a>4、多背景渐变实现</h5><p>与background-image方案类似，只是将图片替换为css3渐变。设置1px的渐变背景，50%有颜色，50%透明。</p>
+<p>样式设置：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.background-gradient-1px</span> &#123;</span><br><span class="line">    <span class="attribute">background</span>:</span><br><span class="line">    <span class="built_in">linear-gradient</span>(<span class="number">180deg</span>, black, black <span class="number">50%</span>, transparent <span class="number">50%</span>) top    left  / <span class="number">100%</span> <span class="number">1px</span> no-repeat,</span><br><span class="line">    <span class="built_in">linear-gradient</span>(<span class="number">90deg</span>,  black, black <span class="number">50%</span>, transparent <span class="number">50%</span>) top    right / <span class="number">1px</span> <span class="number">100%</span> no-repeat,</span><br><span class="line">    <span class="built_in">linear-gradient</span>(<span class="number">0</span>,      black, black <span class="number">50%</span>, transparent <span class="number">50%</span>) bottom right / <span class="number">100%</span> <span class="number">1px</span> no-repeat,</span><br><span class="line">    <span class="built_in">linear-gradient</span>(-<span class="number">90deg</span>, black, black <span class="number">50%</span>, transparent <span class="number">50%</span>) bottom left  / <span class="number">1px</span> <span class="number">100%</span> no-repeat;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 或者 */</span></span><br><span class="line"><span class="selector-class">.background-gradient-1px</span>&#123;</span><br><span class="line">   <span class="attribute">background</span>: <span class="built_in">-webkit-gradient</span>(linear, left top, left bottom, <span class="built_in">color-stop</span>(.<span class="number">5</span>, transparent), <span class="built_in">color-stop</span>(.<span class="number">5</span>, <span class="number">#c8c7cc</span>), <span class="built_in">to</span>(<span class="number">#c8c7cc</span>)) left bottom repeat-x;</span><br><span class="line">   <span class="attribute">background-size</span>: <span class="number">100%</span> <span class="number">1px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优点：</strong></p>
+<ul>
+<li>可以实现单条、多条边框</li>
+<li>边框的颜色随意设置</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>代码量不少</li>
+<li>圆角没法实现</li>
+<li>多背景图片有兼容性问题</li>
+</ul>
+<h5 id="5、使用box-shadow模拟边框"><a href="#5、使用box-shadow模拟边框" class="headerlink" title="5、使用box-shadow模拟边框"></a>5、使用box-shadow模拟边框</h5><p>利用css 对阴影处理的方式实现0.5px的效果</p>
+<p>样式设置：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.box-shadow-1px</span> &#123;</span><br><span class="line">    <span class="attribute">box-shadow</span>: inset <span class="number">0px</span> -<span class="number">1px</span> <span class="number">1px</span> -<span class="number">1px</span> <span class="number">#c8c7cc</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优点：</strong></p>
+<ul>
+<li>代码量少</li>
+<li>可以满足所有场景</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>边框有阴影，颜色变浅</li>
+</ul>
+<h5 id="6、viewport-rem-实现"><a href="#6、viewport-rem-实现" class="headerlink" title="6、viewport + rem 实现"></a>6、viewport + rem 实现</h5><p>同时通过设置对应viewport的rem基准值，这种方式就可以像以前一样轻松愉快的写1px了。</p>
+<p>在devicePixelRatio = 2 时，输出viewport：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5, user-scalable=no&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在devicePixelRatio = 3 时，输出viewport：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;initial-scale=0.3333333333333333, maximum-scale=0.3333333333333333, minimum-scale=0.3333333333333333, user-scalable=no&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这种兼容方案相对比较完美，适合新的项目，老的项目修改成本过大。</p>
+<p>对于这种方案，可以看看<a target="_blank" rel="noopener" href="https://github.com/amfe/article/issues/17">《使用Flexible实现手淘H5页面的终端适配》</a></p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>所有场景都能满足</li>
+<li>一套代码，可以兼容基本所有布局</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>老项目修改代价过大，只适用于新项目</li>
+</ul>
+<h5 id="7、伪类-transform-实现"><a href="#7、伪类-transform-实现" class="headerlink" title="7、伪类 + transform 实现"></a>7、伪类 + transform 实现</h5><p>对于老项目，有没有什么办法能兼容1px的尴尬问题了，个人认为伪类+transform是比较完美的方法了。</p>
+<p>原理是把原先元素的 border 去掉，然后利用 :before 或者 :after 重做 border ，并 transform 的 scale 缩小一半，原先的元素相对定位，新做的 border 绝对定位。</p>
+<p>单条border样式设置：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.scale-1px</span>&#123;</span><br><span class="line">    <span class="attribute">position</span>: relative;</span><br><span class="line">    <span class="attribute">border</span>:none;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.scale-1px</span><span class="selector-pseudo">:after</span>&#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">bottom</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">background</span>: <span class="number">#000</span>;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">1px</span>;</span><br><span class="line">    -webkit-<span class="attribute">transform</span>: <span class="built_in">scaleY</span>(<span class="number">0.5</span>);</span><br><span class="line">            <span class="attribute">transform</span>: <span class="built_in">scaleY</span>(<span class="number">0.5</span>);</span><br><span class="line">    -webkit-<span class="attribute">transform-origin</span>: <span class="number">0</span> <span class="number">0</span>;</span><br><span class="line">            <span class="attribute">transform-origin</span>: <span class="number">0</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>四条boder样式设置:</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.scale-1px</span>&#123;</span><br><span class="line">    <span class="attribute">position</span>: relative;</span><br><span class="line">    <span class="attribute">margin-bottom</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">border</span>:none;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.scale-1px</span><span class="selector-pseudo">:after</span>&#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#000</span>;</span><br><span class="line">    -webkit-<span class="attribute">box-sizing</span>: border-box;</span><br><span class="line">    <span class="attribute">box-sizing</span>: border-box;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">200%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">200%</span>;</span><br><span class="line">    -webkit-<span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">0.5</span>);</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">0.5</span>);</span><br><span class="line">    -webkit-<span class="attribute">transform-origin</span>: left top;</span><br><span class="line">    <span class="attribute">transform-origin</span>: left top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最好在使用前也判断一下，结合 JS 代码，判断是否 Retina 屏：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="variable language_">window</span>.<span class="property">devicePixelRatio</span> &amp;&amp; devicePixelRatio &gt;= <span class="number">2</span>)&#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;ul&#x27;</span>).<span class="property">className</span> = <span class="string">&#x27;scale-1px&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优点：</strong></p>
+<ul>
+<li>所有场景都能满足</li>
+<li>支持圆角(伪类和本体类都需要加border-radius)</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>对于已经使用伪类的元素(例如clearfix)，可能需要多层嵌套</li>
+</ul>
+<h4 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h4><ul>
+<li><a target="_blank" rel="noopener" href="http://efe.baidu.com/blog/1px-on-retina/">《1px on retina》</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ghugo.com/css-retina-hairline/">《再谈mobile web retina 下 1px 边框解决方案》</a></li>
+<li><a target="_blank" rel="noopener" href="http://jinlong.github.io/2015/05/24/css-retina-hairlines/">《Retina屏的移动设备如何实现真正1px的线？》</a></li>
+<li><a target="_blank" rel="noopener" href="http://imweb.io/topic/55e3d402771670e207a16bd1">《在retina屏中实现1px border效果》</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://www.lemonss.net/2016/12/08/retina-1px-border/" title="7种方法解决移动端Retina屏幕1px边框问题" target="_blank" rel="external">https://www.lemonss.net/2016/12/08/retina-1px-border/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/yellowlemon" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/yellowlemon" target="_blank"><span class="text-dark">LemonAce</span><small class="ml-1x">前端开发</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2016/12/13/hexo-ssl/" title="hexo博客之HTTPS访问"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2016/12/07/hexo-qiniu/" title="Hexo折腾之图片存储"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/yellowlemon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.weibo.com/yellowhlemon" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://segmentfault.com/u/yellowlemon" target="_blank" title="Segmentfault" data-toggle=tooltip data-placement=top><i class="icon icon-segmentfault"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2022 LemonAce
+        
+    	
+        <a href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备14013798号</a>
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'ad0d73049986d4d2d07e',
+    clientSecret: '6deecfe5bd7f060da133dacd22fec502d683a1c1',
+    repo: 'gitalk-commit',
+    owner: 'yellowlemon',
+    admin: ['yellowlemon'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true',
+    proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+  })
+  gitalk.render('comments')
+  </script>
+
+      
+
+
+
+
+
+
+
+</body>
+</html>

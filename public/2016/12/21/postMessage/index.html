@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>利用postMessage解决webview中iframe数据交互问题 | 柠檬诗诗的小站</title>
+  <meta name="description" content="最近在项目中遇到了一个在客户端中的webview中嵌入iframe页面的问题，但是嵌入的iframe无法自己撑开，所以需要webview中给iframe一个高度。  这就比较尴尬了，因为webview肯定不知道iframe的高度，所以需要iframe给传一个高度出来。 经过一番查找之后，知道了一种很方便的方法-postMessage方法。 先来看看他的语法： otherWindow.postMes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用postMessage解决webview中iframe数据交互问题">
+<meta property="og:url" content="https://www.lemonss.net/2016/12/21/postMessage/index.html">
+<meta property="og:site_name" content="柠檬诗诗的小站">
+<meta property="og:description" content="最近在项目中遇到了一个在客户端中的webview中嵌入iframe页面的问题，但是嵌入的iframe无法自己撑开，所以需要webview中给iframe一个高度。  这就比较尴尬了，因为webview肯定不知道iframe的高度，所以需要iframe给传一个高度出来。 经过一番查找之后，知道了一种很方便的方法-postMessage方法。 先来看看他的语法： otherWindow.postMes">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.lemonss.net/assets/blogImg/postMessage01.png">
+<meta property="og:image" content="https://www.lemonss.net/assets/blogImg/postMessage02.png">
+<meta property="article:published_time" content="2016-12-21T07:49:41.000Z">
+<meta property="article:modified_time" content="2022-10-18T14:39:17.701Z">
+<meta property="article:author" content="LemonAce">
+<meta property="article:tag" content="js">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.lemonss.net/assets/blogImg/postMessage01.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://www.lemonss.net/2016/12/21/postMessage/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="柠檬诗诗的小站" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/yellowlemon" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">LemonAce</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">前端开发</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Chengdu, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/yellowlemon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.weibo.com/yellowhlemon" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://segmentfault.com/u/yellowlemon" target="_blank" title="Segmentfault" data-toggle=tooltip data-placement=top><i class="icon icon-segmentfault"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%AE%B0/">杂记</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/" rel="tag">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/" rel="tag">js</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/" rel="tag">代码片段</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%AE%B0/" rel="tag">杂记</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF/" rel="tag">移动端</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/css/" style="font-size: 13px;">css</a> <a href="/tags/hexo/" style="font-size: 14px;">hexo</a> <a href="/tags/js/" style="font-size: 13px;">js</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/" style="font-size: 13px;">代码片段</a> <a href="/tags/%E6%9D%82%E8%AE%B0/" style="font-size: 13px;">杂记</a> <a href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF/" style="font-size: 13px;">移动端</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/01/06/longtap/" class="title">禁止长按选中文本</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-01-06T09:21:02.000Z" itemprop="datePublished">2017-01-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a>
+              </p>
+              <p class="item-title">
+                <a href="/2016/12/21/postMessage/" class="title">利用postMessage解决webview中iframe数据交互问题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2016-12-21T07:49:41.000Z" itemprop="datePublished">2016-12-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/hexo/">hexo</a>
+              </p>
+              <p class="item-title">
+                <a href="/2016/12/13/hexo-ssl/" class="title">hexo博客之HTTPS访问</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2016-12-13T05:58:20.000Z" itemprop="datePublished">2016-12-13</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a>
+              </p>
+              <p class="item-title">
+                <a href="/2016/12/08/retina-1px-border/" class="title">7种方法解决移动端Retina屏幕1px边框问题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2016-12-08T02:38:15.000Z" itemprop="datePublished">2016-12-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/hexo/">hexo</a>
+              </p>
+              <p class="item-title">
+                <a href="/2016/12/07/hexo-qiniu/" class="title">Hexo折腾之图片存储</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2016-12-07T06:58:16.000Z" itemprop="datePublished">2016-12-07</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-postMessage" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      利用postMessage解决webview中iframe数据交互问题
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2016/12/21/postMessage/" class="article-date">
+	  <time datetime="2016-12-21T07:49:41.000Z" itemprop="datePublished">2016-12-21</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E4%BB%A3%E7%A0%81/">代码</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/js/" rel="tag">js</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2016/12/21/postMessage/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>最近在项目中遇到了一个在客户端中的webview中嵌入iframe页面的问题，但是嵌入的iframe无法自己撑开，所以需要webview中给iframe一个高度。</p>
+<p><img src="/assets/blogImg/postMessage01.png" alt="iframe高度bug"></p>
+<p>这就比较尴尬了，因为webview肯定不知道iframe的高度，所以需要iframe给传一个高度出来。</p>
+<p>经过一番查找之后，知道了一种很方便的方法-postMessage方法。</p>
+<h4 id="先来看看他的语法："><a href="#先来看看他的语法：" class="headerlink" title="先来看看他的语法："></a>先来看看他的语法：</h4><blockquote>
+<p>otherWindow.postMessage(data, origin, [transfer]);</p>
+</blockquote>
+<p>otherWindow</p>
+<ul>
+<li>其他窗口的一个引用，比如iframe的contentWindow属性、执行window.open返回的窗口对象、或者是命名过或数值索引的window.frames。这里即可以是父窗口，也可以子窗口，两者是可以相互传递数据的。</li>
+</ul>
+<p>data</p>
+<ul>
+<li>将要发送到其他window的数据。它将会被结构化克隆算法序列化(这个不懂是什么意思)。这意味着你可以不受什么限制的将数据对象安全的传送给目标窗口而无需自己序列化。基本是什么参数都可以，字符串、数字、对象、数组，都OK。</li>
+</ul>
+<p>origin</p>
+<ul>
+<li>字符串参数，指明目标窗口的源，协议+主机+端口号[+URL]，URL会被忽略，所以可以不写，这个参数是为了安全考虑，postMessage()方法只会将message传递给指定窗口，当然如果愿意也可以建参数设置为”*”，这样可以传递给任意窗口，如果要指定和当前窗口同源的话设置为”/“。</li>
+</ul>
+<p>transfer(可选)</p>
+<ul>
+<li>是一串和message 同时传递的 Transferable 对象. 这些对象的所有权将被转移给消息的接收方，而发送一方将不再保有所有权。（不懂是什么意思，一般没有什么用吧，望大神指点）</li>
+</ul>
+<br/>
+#### 父页面获取iframe页面信息：
+demo我放在github上的：
+demo地址：[父页面获取iframe页面信息](https://htmlpreview.github.io/?https://github.com/yellowlemon/Demo/blob/master/postMessage/btoa/a.html)
+
+<p><strong>父页面：</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>我是父页面<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>接收到的iframe信息是：<span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;content&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;/btoa/b.html&quot;</span> <span class="attr">frameborder</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// event 参数中有 data 属性，就是iframe页面发送过来的数据</span></span></span><br><span class="line"><span class="language-javascript">         <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;message&quot;</span>, <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span></span><br><span class="line"><span class="language-javascript">             <span class="comment">// 把iframe页面发送过来的数据显示在父页面中</span></span></span><br><span class="line"><span class="language-javascript">           <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;content&quot;</span>).<span class="property">innerHTML</span>= event.<span class="property">data</span>;</span></span><br><span class="line"><span class="language-javascript">         &#125;, <span class="literal">false</span>);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>iframe页面</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>我是iframe页面<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>发送的信息是：<span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;iframe&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;sendBtn&quot;</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">value</span>=<span class="string">&quot;发送&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 点击按钮后向父页面发送数据</span></span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;sendBtn&#x27;</span>).<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// window.parent代表父页面</span></span></span><br><span class="line"><span class="language-javascript">            <span class="variable language_">window</span>.<span class="property">parent</span>.<span class="title function_">postMessage</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;iframe&quot;</span>).<span class="property">value</span>, <span class="string">&#x27;*&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<br/>
+#### iframe页面获取父页面信息：
+demo我放在github上的：
+demo地址：[iframe页面获取父页面信息](https://htmlpreview.github.io/?https://github.com/yellowlemon/Demo/blob/master/postMessage/atob/a.html)
+
+<p><strong>父页面：</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>我是父页面<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>发送的信息是：<span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;iframe&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;sendBtn&quot;</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">value</span>=<span class="string">&quot;发送&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;/atob/b.html&quot;</span> <span class="attr">frameborder</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 点击按钮后向iframe页面发送数据</span></span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;sendBtn&#x27;</span>).<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// window.frames[0]代表第一个iframe页面</span></span></span><br><span class="line"><span class="language-javascript">            <span class="variable language_">window</span>.<span class="property">frames</span>[<span class="number">0</span>].<span class="title function_">postMessage</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;iframe&quot;</span>).<span class="property">value</span>, <span class="string">&#x27;*&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>iframe页面</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>我是iframe页面<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>接收到的父页面信息是：<span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;content&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// event 参数中有 data 属性，就是父页面发送过来的数据</span></span></span><br><span class="line"><span class="language-javascript">         <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;message&quot;</span>, <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span></span><br><span class="line"><span class="language-javascript">             <span class="comment">// 把父页面发送过来的数据显示在父页面中</span></span></span><br><span class="line"><span class="language-javascript">           <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;content&quot;</span>).<span class="property">innerHTML</span>= event.<span class="property">data</span>;</span></span><br><span class="line"><span class="language-javascript">         &#125;, <span class="literal">false</span>);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>通过这两个简单的例子我们会发现postMessage的强大之处，有了postMessage，我们甚至可以在两个iframe之间传送数据，只需要一个共同的父元素做中间页。</p>
+<br/>
+#### 需要注意的地方：
+
+<p><strong>兼容性：</strong></p>
+<p><img src="/assets/blogImg/postMessage02.png" alt="caniuse"></p>
+<p>通过图上可以看出，基本大部分的都能兼容的，但是需要注意一下这句话。</p>
+<blockquote>
+<p>Internet Explorer 8 and 9, and Firefox versions 6.0 and below only support strings as postMessage’s message.(ie 8和9,和Firefox 6.0及以下版本只支持字符串作为postMessage的消息。)</p>
+</blockquote>
+<p>所以如果需要支持这些版本的需要注意data只能是字符串。</p>
+<p><strong>安全性：</strong></p>
+<p>在线上进行交互时，最好做好安全措施，对于postMessage，最好采用“双向安全机制”。发送方发送数据的时候，确认接受方的源（所以最好不要用*），而接受方监听到message事件后，也可以用event.origin判断是否来自于正确可靠的发送方。并且最好做一下传递数据的数据类型校验。如以下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function checkMessage(event) &#123;</span><br><span class="line">    // 只获取需要的域，并非所有都可以跨域</span><br><span class="line">    if (event.origin != &quot;need domain&quot;) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    var data = event.data;</span><br><span class="line">    // 传输数据类型校验</span><br><span class="line">    if (typeof(data) !== &#x27;object&#x27;) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // data 的type中包含xxx则为xxx需要字段。</span><br><span class="line">    return data.type === &quot;xxx&quot;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>并且通过不同的type可以处理不同的数据，如以下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">switch (checkMessage(event)) &#123;</span><br><span class="line">    case &#x27;height&#x27;:</span><br><span class="line">        $(&quot;#bet_&quot;+e.data.id).css(&quot;height&quot;, (e.data.height+1) + &quot;px&quot;);</span><br><span class="line">        break;</span><br><span class="line">    case &#x27;jumpDown&#x27;:</span><br><span class="line">        window.location.href = downUrl;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://www.lemonss.net/2016/12/21/postMessage/" title="利用postMessage解决webview中iframe数据交互问题" target="_blank" rel="external">https://www.lemonss.net/2016/12/21/postMessage/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/yellowlemon" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/yellowlemon" target="_blank"><span class="text-dark">LemonAce</span><small class="ml-1x">前端开发</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2017/01/06/longtap/" title="禁止长按选中文本"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2016/12/13/hexo-ssl/" title="hexo博客之HTTPS访问"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/yellowlemon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://www.weibo.com/yellowhlemon" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://segmentfault.com/u/yellowlemon" target="_blank" title="Segmentfault" data-toggle=tooltip data-placement=top><i class="icon icon-segmentfault"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2022 LemonAce
+        
+    	
+        <a href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备14013798号</a>
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'ad0d73049986d4d2d07e',
+    clientSecret: '6deecfe5bd7f060da133dacd22fec502d683a1c1',
+    repo: 'gitalk-commit',
+    owner: 'yellowlemon',
+    admin: ['yellowlemon'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true',
+    proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+  })
+  gitalk.render('comments')
+  </script>
+
+      
+
+
+
+
+
+
+
+</body>
+</html>
